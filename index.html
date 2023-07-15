@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="keywords" content="" />
+	<meta name="description" content="" />
+	<link rel="apple-touch-icon" sizes="180x180" href="./src/images/apple-touch-icon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="./src/images/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="./src/images/favicon-16x16.png" />
+	<script src="https://f.wanmaapp.com/js/tailwindcss.js"></script>
+	<style>
+		body,
+		html {
+			height: 100%;
+		}
+
+		::-webkit-scrollbar {
+			width: 5px;
+			height: 5px;
+		}
+
+		::-webkit-scrollbar-track-piece {
+			background-color: rgba(0, 0, 0, 0.2);
+			-webkit-border-radius: 6px;
+		}
+
+		::-webkit-scrollbar-thumb:vertical {
+			height: 5px;
+			background-color: rgba(125, 125, 125, 0.7);
+			-webkit-border-radius: 6px
+		}
+
+		::-webkit-scrollbar-thumb:horizontal {
+			width: 5px;
+			background-color: rgba(125, 125, 125, 0.7);
+			-webkit-border-radius: 6px
+		}
+	</style>
+	<title>ChatGPT</title>
+</head>
+
+<body class="text-slate-500 bg-slate-900">
+	<div class="h-full" id="app">
+		<!--背景图片-->
+		<div class="absolute z-20 top-0 bottom-0 inset-x-0 flex justify-center overflow-hidden pointer-events-none">
+			<div class="w-[108rem] flex-none flex justify-end">
+				<picture>
+					<source srcset="./src/images/docs-dark@30.1a9f8cbf.avif" type="image/avif">
+					<img src="images/docs-dark@tinypng.1bbe175e.png" alt="" class="w-[90rem] flex-none max-w-none block"
+						decoding="async">
+				</picture>
+			</div>
+		</div>
+		<!--背景图片end-->
+
+		<div class="overflow-hidden w-full h-full relative flex">
+
+			<div v-if="!showSidebar" v-on:click="handleToggleChatbar"
+				class="absolute left-2 top-2 z-10 hidden md:inline-block" style="opacity: 1;">
+				<button aria-label="Show sidebar"
+					class="flex p-3 items-center gap-3 transition-colors duration-200 text-white cursor-pointer text-sm rounded-md border  dark:bg-gray-800 border-white/20  hover:bg-gray-500/10  h-11">
+					<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+						stroke-linejoin="round" class="h-4 w-4 text-white dark:text-white" height="1em" width="1em"
+						xmlns="http://www.w3.org/2000/svg">
+						<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+						<line x1="9" y1="3" x2="9" y2="21"></line>
+					</svg>
+				</button>
+			</div>
+
+			<!--左侧列表-->
+			<Transition name="sidebar">
+				<div v-if="showSidebar" class="overflow-hidden md:w-[260px]">
+					<div class="dark h-full md:flex md:w-[260px] md:flex-col">
+						<div class="flex h-full min-h-0 flex-col ">
+							<div class="flex h-full w-full flex-1 items-start border-r border-slate-800">
+								<nav class="flex h-full flex-1 flex-col space-y-1 p-2">
+									<div class="flex space-x-2">
+										<a v-on:click="handleNewConversation"
+											class="flex flex-1 py-3 px-3 items-center gap-3 rounded-md hover:bg-sky-400 transition-colors duration-200 text-white cursor-pointer text-sm mb-2 flex-shrink-0 bg-slate-700 shadow-sm">
+											<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+												xmlns="http://www.w3.org/2000/svg">
+												<line x1="12" y1="5" x2="12" y2="19"></line>
+												<line x1="5" y1="12" x2="19" y2="12"></line>
+											</svg>
+											新对话
+										</a>
+										<a v-on:click="handleToggleChatbar" title="隐藏"
+											class="flex p-3 gap-3 transition-colors duration-200 text-white cursor-pointer text-sm rounded-md border border-white/20 hover:bg-gray-500/10 h-11 w-11 flex-shrink-0 items-center justify-center"><svg
+												stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+												xmlns="http://www.w3.org/2000/svg">
+												<rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+												<line x1="9" y1="3" x2="9" y2="21"></line>
+											</svg>
+										</a>
+									</div>
+
+									<!--聊天记录-->
+									<Conversations v-on:select-conversation="handleSelectConversation"
+										:on-updated-conversation="handleUpdatedConversation"
+										:on-delete-conversation="handleDeleteConversation" :conversations="conversations"
+										:select-conversation="selectedConversation"></Conversations>
+									<!--聊天记录end-->
+
+									<div class="border-b border-slate-800">
+										<a
+											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+											<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+												xmlns="http://www.w3.org/2000/svg">
+												<polyline points="3 6 5 6 21 6"></polyline>
+												<path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+												</path>
+												<line x1="10" y1="11" x2="10" y2="17"></line>
+												<line x1="14" y1="11" x2="14" y2="17"></line>
+											</svg>清除
+										</a>
+
+										<a href="套餐.html" target="_blank"
+											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+											<span class="flex w-full flex-row justify-between">
+												<span class="gold-new-button flex items-center gap-3">
+													<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24"
+														stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+														xmlns="http://www.w3.org/2000/svg">
+														<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+														<circle cx="12" cy="7" r="4"></circle>
+													</svg>套餐
+												</span>
+												<span
+													class="rounded-md bg-yellow-200 py-0.5 px-1.5 text-xs font-medium uppercase text-gray-800">新</span>
+											</span>
+										</a>
+
+										<a href="设置.html" target="_blank"
+											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm"><svg
+												stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+												xmlns="http://www.w3.org/2000/svg">
+												<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+												<polyline points="15 3 21 3 21 9"></polyline>
+												<line x1="10" y1="14" x2="21" y2="3"></line>
+											</svg>设置
+										</a>
+
+										<a href="联系我们.html" target="_blank"
+											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+												stroke="currentColor" class="h-4 w-4" height="1em" width="1em">
+												<path stroke-linecap="round" stroke-linejoin="round"
+													d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+											</svg>
+											联系
+										</a>
+
+										<a href="登录.html"
+											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
+											<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
+												xmlns="http://www.w3.org/2000/svg">
+												<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+												<polyline points="16 17 21 12 16 7"></polyline>
+												<line x1="21" y1="12" x2="9" y2="12"></line>
+											</svg>退出
+										</a>
+									</div>
+
+									<div
+										class="flex py-3 px-3 items-center gap-3 rounded-md duration-200 cursor-pointer text-xs text-slate-400 text-center">
+										<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2022041692号-1</a>
+									</div>
+
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</Transition>
+			<!--左侧列表End-->
+
+
+			<div class="flex h-full max-w-full flex-1 flex-col">
+
+				<!--移动端显示头部-->
+				<div
+					class="sticky top-0 z-10 flex items-center border-b border-white/20 bg-gray-800 pl-1 pt-1 text-gray-200 sm:pl-3 md:hidden">
+					<button type="button"
+						class="-ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:hover:text-white">
+						<span class="sr-only">打开侧边栏</span><svg stroke="currentColor" fill="none" stroke-width="1.5"
+							viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em"
+							width="1em" xmlns="http://www.w3.org/2000/svg">
+							<line x1="3" y1="12" x2="21" y2="12"></line>
+							<line x1="3" y1="6" x2="21" y2="6"></line>
+							<line x1="3" y1="18" x2="21" y2="18"></line>
+						</svg></button>
+					<h1 class="flex-1 text-center text-base font-normal">新聊天</h1><button type="button" class="px-3"><svg
+							stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24" stroke-linecap="round"
+							stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg">
+							<line x1="12" y1="5" x2="12" y2="19"></line>
+							<line x1="5" y1="12" x2="19" y2="12"></line>
+						</svg>
+					</button>
+				</div>
+				<!--移动端显示头部end-->
+
+
+				<main class="relative h-full w-full transition-width flex flex-col overflow-hidden items-stretch flex-1">
+
+					<div class="flex-1 overflow-hidden">
+						<div class="relative h-full">
+							<div class="h-full w-full overflow-y-auto">
+
+								<!--提示内容区-->
+								<div v-if="selectedConversation === null || selectedConversation.messages.length === 0"
+									class="flex flex-col items-center text-sm">
+									<div class="text-slate-400 w-full md:max-w-2xl lg:max-w-3xl md:h-full md:flex md:flex-col px-6">
+										<h1
+											class="text-4xl font-semibold text-center mt-6 sm:mt-[20vh] ml-auto mr-auto mb-10 sm:mb-16 flex gap-2 items-center justify-center text-slate-200">
+											ChatGPT</h1>
+										<div class="md:flex items-start text-center gap-3.5">
+											<div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+												<h2 class="flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+													<svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
+														stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em"
+														xmlns="http://www.w3.org/2000/svg">
+														<circle cx="12" cy="12" r="5"></circle>
+														<line x1="12" y1="1" x2="12" y2="3"></line>
+														<line x1="12" y1="21" x2="12" y2="23"></line>
+														<line x1="4.22" y1="4.22" x2="5.64" y2="5.64">
+														</line>
+														<line x1="18.36" y1="18.36" x2="19.78" y2="19.78">
+														</line>
+														<line x1="1" y1="12" x2="3" y2="12"></line>
+														<line x1="21" y1="12" x2="23" y2="12"></line>
+														<line x1="4.22" y1="19.78" x2="5.64" y2="18.36">
+														</line>
+														<line x1="18.36" y1="5.64" x2="19.78" y2="4.22">
+														</line>
+													</svg>例子
+												</h2>
+
+												<ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+													<button class="w-full bg-slate-800 p-3 rounded-md hover:bg-slate-700">《用简单的术语解释量子计算》→</button>
+													<button class="w-full bg-slate-800 p-3 rounded-md hover:bg-slate-700">对 10
+														岁生日有什么创意吗？→</button>
+													<button class="w-full bg-slate-800 p-3 rounded-md hover:bg-slate-700">如何在 Javascript 中发出 HTTP
+														请求？→</button>
+												</ul>
+											</div>
+
+											<div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+												<h2 class="flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+													<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+														stroke="currentColor" aria-hidden="true" class="h-6 w-6">
+														<path stroke-linecap="round" stroke-linejoin="round"
+															d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z">
+														</path>
+													</svg>能力
+												</h2>
+
+
+												<ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+													<li class="w-full bg-slate-800 p-3 rounded-md">记住用户早些时候在对话中说的话</li>
+													<li class="w-full bg-slate-800 p-3 rounded-md">允许用户提供后续更正</li>
+													<li class="w-full bg-slate-800 p-3 rounded-md">接受过拒绝不当请求的培训</li>
+												</ul>
+											</div>
+
+
+											<div class="flex flex-col mb-8 md:mb-auto gap-3.5 flex-1">
+												<h2 class="flex gap-3 items-center m-auto text-lg font-normal md:flex-col md:gap-2">
+													<svg stroke="currentColor" fill="none" stroke-width="1.5" viewBox="0 0 24 24"
+														stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em" width="1em"
+														xmlns="http://www.w3.org/2000/svg">
+														<path
+															d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+														</path>
+														<line x1="12" y1="9" x2="12" y2="13"></line>
+														<line x1="12" y1="17" x2="12.01" y2="17"></line>
+													</svg>
+													限制
+												</h2>
+
+
+												<ul class="flex flex-col gap-3.5 w-full sm:max-w-md m-auto">
+													<li class="w-full bg-slate-800 p-3 rounded-md">
+														可能偶尔会产生不正确的信息
+													</li>
+													<li class="w-full bg-slate-800 p-3 rounded-md">
+														可能偶尔会产生有害的指令或有偏见的内容</li>
+													<li class="w-full bg-slate-800 p-3 rounded-md">
+														对 2021 年后的世界和事件的了解有限
+													</li>
+												</ul>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<!--提示内容区end-->
+
+
+								<!--对话列表区-->
+								<Chat v-else :conversation="selectedConversation"></Chat>
+								<!--对话列表区end-->
+							</div>
+						</div>
+					</div>
+
+					<div
+						class="absolute bottom-0 left-0 w-full  md:border-t-0  md:border-transparent md:dark:border-transparent   pt-2 md:pl-2 md:w-[calc(100%-.5rem)] md:bg-vert-dark-gradient">
+
+						<!--斜杠显示提示-->
+						<Transition>
+							<div v-if="showPrompt" ref="promptListRef"
+								class="stretch m-2 gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl rounded-md p-2 bg-slate-800">
+								<div class="max-h-96 overflow-x-auto">
+									<div role="listbox" class="listItems-6eZzQ1">
+										<ul class="gap-3 flex flex-col">
+
+											<li v-for="prompt, index in prompts" :key="prompt.title" v-on:mouseenter="onMouseOver(index)"
+												v-on:click="(e) => {
+												e.preventDefault();
+          							e.stopPropagation();
+												handleInitModal()
+											}">
+												<div :class="{'bg-slate-600/100': index === activePromptIndex}"
+													class="cursor-pointer flex items-center bg-slate-700/30  rounded-md transition-colors p-2">
+													<div class="mr-2 rounded-md ring-1 ring-slate-700">
+														<svg width="20" height="20" viewBox="0 0 20 20">
+															<path d="M13 13h4-4V8H7v5h6v4-4H7V8H3h4V3v5h6V3v5h4-4v5zm-6 0v4-4H3h4z"
+																stroke="currentColor" fill="none" fill-rule="evenodd" stroke-linecap="round"
+																stroke-linejoin="round"></path>
+														</svg>
+													</div>
+													<div class="flex-auto flex flex-col-reverse">
+														<span class="text-slate-400 text-xs line-clamp-1">{{ prompt.content }}</span>
+														<span class="text-white mb-2 text-sm ">{{ prompt.title }}</span>
+													</div>
+												</div>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</Transition>
+						<!--斜杠显示提示end-->
+
+
+
+						<!--输入框-->
+						<div
+							class="stretch mx-2 flex flex-row gap-3 last:mb-2 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
+							<div class="relative flex h-full flex-1 md:flex-col">
+								<div
+									class="flex flex-col w-full py-2 flex-grow md:py-3 md:pl-4 relative border border-gray-900/50 text-white bg-slate-800 rounded-md shadow-[0_0_15px_rgba(0,0,0,0.10)]">
+									<textarea v-on:keyDown="handleKeyDown" v-on:input="handleChange" ref="TextInput" :value="content"
+										style="max-height: 200px; height: 24px; overflow-y: hidden;" rows="1" placeholder="发送一个消息..."
+										class="m-0 w-full resize-none border-0  p-0 pr-11 focus:ring-0 focus:outline-none focus-visible:ring-0 bg-slate-800 pl-2 md:pl-0"></textarea>
+
+									<button v-on:click="handleSend" :class="{'text-white': content.length > 0}"
+										class="absolute p-1 rounded-md text-gray-500 bottom-1.5 md:bottom-2.5 enabled:dark:hover:text-gray-400 hover:bg-gray-900 disabled:hover:bg-transparent right-1 md:right-2 disabled:opacity-40">
+										<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+											stroke-linejoin="round" class="h-4 w-4 mr-1" height="1em" width="1em"
+											xmlns="http://www.w3.org/2000/svg">
+											<line x1="22" y1="2" x2="11" y2="13"></line>
+											<polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+										</svg>
+									</button>
+								</div>
+							</div>
+						</div>
+						<!--输入框end-->
+
+
+						<div class="px-3 pt-2 pb-3 text-center text-xs text-white/50 md:px-4 md:pt-3 md:pb-6">
+							<span>如需获取更高质量回答，请使用
+								<span class="inline-flex items-center bg-slate-800 text-sky-400 font-bold p-1 rounded-sm">
+									/
+								</span>
+								调出高级功能
+							</span>
+						</div>
+
+					</div>
+					<!--底部输入End-->
+
+				</main>
+
+			</div>
+
+
+		</div>
+
+	</div>
+
+	<script type="module" src="./src/index.ts"></script>
+
+</body>
+
+</html>

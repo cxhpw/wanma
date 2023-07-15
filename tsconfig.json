@@ -1,0 +1,24 @@
+{
+  "include": [
+    "**/*.ts",
+    "src/**/*.vue",
+    "src/types/*.d.ts",
+    "src/services/*.ts",
+    "src/services/markdownRender.ts"
+  ],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "target": "es5",
+    "lib": ["ESNext", "DOM"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "isolatedModules": true,
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["node", "vue-tsc"]
+  }
+}
