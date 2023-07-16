@@ -1,7 +1,7 @@
 <script setup lang="ts">
 type Props = {
-  size: string;
-  class: string;
+  size?: string;
+  class?: string;
 };
 withDefaults(defineProps<Props>(), {
   size: "1em",

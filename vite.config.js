@@ -30,7 +30,7 @@ export default defineConfig({
   optimizeDeps: {
   },
   build: {
-    minify: false,
+    // minify: false,
     commonjsOptions: {
     },
     rollupOptions: {
@@ -41,7 +41,9 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
       },
       output: {
-        chunkFileNames: 'static/js/[name].js',
+        chunkFileNames: 'static/js/[name].[hash].js',
+        entryFileNames: 'static/js/[name].[hash].js',
+        assetFileNames: 'static/assets/[name].[hash][extname]',
         manualChunks: (id) => {
           if (id.includes("highlight.js/lib/languages/")) {
             // 将 highlight.js 语言包单独打包到一个文件夹

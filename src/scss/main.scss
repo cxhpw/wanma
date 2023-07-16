@@ -1,3 +1,4 @@
+
 @import "tailwindcss/utilities";
 
 .v-enter-active,
@@ -10,13 +11,6 @@
   opacity: 0;
   transform: translateY(100px);
 }
-
-.sidebar-enter-active,
-.sidebar-leave-active {
-  transition: all 0.3s ease;
-}
-
-.sidebar-enter-from,
-.sidebar-leave-to {
-  width: 0px;
+[v-cloak] {
+  display: none;
 }

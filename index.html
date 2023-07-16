@@ -1,15 +1,38 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<meta name="keywords" content="" />
-	<meta name="description" content="" />
-	<link rel="apple-touch-icon" sizes="180x180" href="./src/images/apple-touch-icon.png" />
-	<link rel="icon" type="image/png" sizes="32x32" href="./src/images/favicon-32x32.png" />
-	<link rel="icon" type="image/png" sizes="16x16" href="./src/images/favicon-16x16.png" />
+	<meta name="keywords" content="$!{config.IndexKeywords}" />
+	<meta name="description" content="$!{config.IndexDescription}" />
+	<link rel="apple-touch-icon" sizes="180x180" href="${mbpath}images/apple-touch-icon.png" />
+	<link rel="icon" type="image/png" sizes="32x32" href="${mbpath}images/favicon-32x32.png" />
+	<link rel="icon" type="image/png" sizes="16x16" href="${mbpath}images/favicon-16x16.png" />
 	<script src="https://f.wanmaapp.com/js/tailwindcss.js"></script>
+	<title>$!{config.IndexTitle}</title>
+	<script>
+		var _hmt = _hmt || [];
+		(function () {
+			var hm = document.createElement("script");
+			hm.src = "https://hm.baidu.com/hm.js?dffce3032bbb641319976308d8a47e46";
+			var s = document.getElementsByTagName("script")[0];
+			s.parentNode.insertBefore(hm, s);
+		})();
+	</script>
+	<script>
+		site_config = {
+			prompts: [
+				// #set($lizi= ${cms.GetContents("example","","Sort asc,AutoTimeStamp desc,AutoID desc",1,9999)})
+				// #foreach($item in $lizi)
+				// {
+				// 	title: "$item.Title",
+				// 	content: "$!item.Summary"
+				// },
+				// #end
+			]
+		}
+	</script>
 	<style>
 		body,
 		html {
@@ -38,17 +61,16 @@
 			-webkit-border-radius: 6px
 		}
 	</style>
-	<title>ChatGPT</title>
 </head>
 
 <body class="text-slate-500 bg-slate-900">
-	<div class="h-full" id="app">
+	<div class="h-full" id="app" v-cloak>
 		<!--背景图片-->
 		<div class="absolute z-20 top-0 bottom-0 inset-x-0 flex justify-center overflow-hidden pointer-events-none">
 			<div class="w-[108rem] flex-none flex justify-end">
 				<picture>
-					<source srcset="./src/images/docs-dark@30.1a9f8cbf.avif" type="image/avif">
-					<img src="images/docs-dark@tinypng.1bbe175e.png" alt="" class="w-[90rem] flex-none max-w-none block"
+					<source srcset="https://f.wanmaapp.com/img/bg2" type="image/avif">
+					<img src="https://f.wanmaapp.com/img/bg2" alt="" class="w-[90rem] flex-none max-w-none block"
 						decoding="async">
 				</picture>
 			</div>
@@ -72,7 +94,7 @@
 
 			<!--左侧列表-->
 			<Transition name="sidebar">
-				<div v-if="showSidebar" class="overflow-hidden md:w-[260px]">
+				<div v-if="showSidebar" class="fixed top-0 bottom-0 transition-all  overflow-hidden w-[260px] sm:relative bg-slate-900 z-50">
 					<div class="dark h-full md:flex md:w-[260px] md:flex-col">
 						<div class="flex h-full min-h-0 flex-col ">
 							<div class="flex h-full w-full flex-1 items-start border-r border-slate-800">
@@ -100,13 +122,15 @@
 									</div>
 
 									<!--聊天记录-->
-									<Conversations v-on:select-conversation="handleSelectConversation"
-										:on-updated-conversation="handleUpdatedConversation"
-										:on-delete-conversation="handleDeleteConversation" :conversations="conversations"
-										:select-conversation="selectedConversation"></Conversations>
+									<div class="flex-col flex-1 overflow-y-auto border-b border-slate-800">
+										<Conversations loading="loadingHistory" v-on:select-conversation="handleSelectConversation"
+											:on-updated-conversation="handleUpdatedConversation"
+											:on-delete-conversation="handleDeleteConversation" :conversations="conversations"
+											:select-conversation="selectedConversation"></Conversations>
+									</div>
 									<!--聊天记录end-->
 
-									<div class="border-b border-slate-800">
+									<div class="border-b border-slate-800 mt-auto">
 										<a
 											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
 											<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
@@ -120,7 +144,7 @@
 											</svg>清除
 										</a>
 
-										<a href="套餐.html" target="_blank"
+										<a href="/shop/setmeal" target="_blank"
 											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
 											<span class="flex w-full flex-row justify-between">
 												<span class="gold-new-button flex items-center gap-3">
@@ -136,7 +160,7 @@
 											</span>
 										</a>
 
-										<a href="设置.html" target="_blank"
+										<a href="/user/changepwd" target="_blank"
 											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm"><svg
 												stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
 												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
@@ -147,7 +171,7 @@
 											</svg>设置
 										</a>
 
-										<a href="联系我们.html" target="_blank"
+										<a href="/User/Message" target="_blank"
 											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
 											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 												stroke="currentColor" class="h-4 w-4" height="1em" width="1em">
@@ -157,7 +181,7 @@
 											联系
 										</a>
 
-										<a href="登录.html"
+										<a href="/User/logout"
 											class="flex py-3 px-3 items-center gap-3 rounded-md hover:bg-gray-500/10 transition-colors duration-200 text-white cursor-pointer text-sm">
 											<svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
 												stroke-linejoin="round" class="h-4 w-4" height="1em" width="1em"
@@ -171,7 +195,7 @@
 
 									<div
 										class="flex py-3 px-3 items-center gap-3 rounded-md duration-200 cursor-pointer text-xs text-slate-400 text-center">
-										<a href="https://beian.miit.gov.cn/" target="_blank">粤ICP备2022041692号-1</a>
+										<a href="https://beian.miit.gov.cn/" target="_blank">${config.IcpNo}</a>
 									</div>
 
 								</nav>
@@ -179,7 +203,6 @@
 						</div>
 					</div>
 				</div>
-
 			</Transition>
 			<!--左侧列表End-->
 
@@ -189,7 +212,9 @@
 				<!--移动端显示头部-->
 				<div
 					class="sticky top-0 z-10 flex items-center border-b border-white/20 bg-gray-800 pl-1 pt-1 text-gray-200 sm:pl-3 md:hidden">
-					<button type="button"
+					<button 
+						v-on:click="handleToggleChatbar"
+						type="button"
 						class="-ml-0.5 -mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white dark:hover:text-white">
 						<span class="sr-only">打开侧边栏</span><svg stroke="currentColor" fill="none" stroke-width="1.5"
 							viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6" height="1em"
@@ -400,7 +425,6 @@
 	</div>
 
 	<script type="module" src="./src/index.ts"></script>
-
 </body>
 
 </html>

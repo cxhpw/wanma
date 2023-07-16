@@ -1,0 +1,9 @@
+.sidebar-enter-active,
+.sidebar-leave-active {
+  transition: all 0.3s ease;
+}
+
+.sidebar-enter-from,
+.sidebar-leave-to {
+  width: 0px;
+}

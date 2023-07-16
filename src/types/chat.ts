@@ -15,7 +15,7 @@ export interface ChatBody {
 }
 
 export interface Conversation {
-  id: string;
+  id: string | number;
   name: string;
   messages: Message[];
   model: OpenAIModel;
@@ -26,4 +26,31 @@ export interface Conversation {
 export interface Prompt {
   title: string;
   content: string;
+}
+
+export interface SteamBody {
+  msglist: MesType[];
+  openapikey: string;
+  userkey: string
+}
+
+export interface MesType {
+  MesType: 0 | 1;
+  MsgContent: string;
+  Sort: number
+}
+
+
+export interface ConversationResponse {
+  AutoID: number;
+  AutoTimeStamp: string;
+  Title: string;
+}
+
+
+export interface MessageResponse {
+  AutoID: string;
+  AutoTimeStamp: string;
+  ChatID: string;
+  Content: string;
 }
