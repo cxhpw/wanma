@@ -17,6 +17,16 @@ export default defineConfig({
       ? visualizer({ open: true, brotliSize: true, filename: "report.html" })
       : null,
   ],
+  experimental: {
+    renderBuiltUrl(filename, { hostType, hostId, type }) {
+      if (filename.indexOf("languages") !== -1) {
+        filename = filename.split("languages")[1]
+        return "https://f.wanmaapp.com/js/static" + filename
+      } else {
+        return { relative: true }
+      } 
+    }
+  },
   resolve: {
     extensions: [".vue", ".ts"],
     alias: {
@@ -41,7 +51,7 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
       },
       output: {
-        chunkFileNames: 'static/js/[name].[hash].js',
+        chunkFileNames: 'static/js/[name].js',
         entryFileNames: 'static/js/[name].[hash].js',
         assetFileNames: 'static/assets/[name].[hash][extname]',
         manualChunks: (id) => {

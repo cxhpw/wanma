@@ -26,20 +26,19 @@ const app = createApp({
       showHint: false,
       showSidebar: true,
       activePromptIndex: 0,
-      //@ts-ignore
-      prompts: Object.freeze(window.site_config.prompts),
-      // prompts: [
-      //   {
-      //     title: "作为广告商",
-      //     content:
-      //       "1我想让你充当广告商。您将创建一个活动来推广您选择的产品或服务。您将选择目标受众，制定关键信息和口号，选择宣传媒体渠道，并决定实现目标所需的任何其他活动。我的第一个建议请求是“我需要帮助针对18-30岁的年轻人制作一种新型能量饮料的广告活动。”",
-      //   },
-      //   {
-      //     title: "作为广告商",
-      //     content:
-      //       "2我想让你充当广告商。您将创建一个活动来推广您选择的产品或服务。您将选择目标受众，制定关键信息和口号，选择宣传媒体渠道，并决定实现目标所需的任何其他活动。我的第一个建议请求是“我需要帮助针对18-30岁的年轻人制作一种新型能量饮料的广告活动。”",
-      //   },
-      // ],
+      // prompts: Object.freeze(window.site_config.prompts),
+      prompts: [
+        {
+          title: "作为广告商",
+          content:
+            "1我想让你充当广告商。您将创建一个活动来推广您选择的产品或服务。您将选择目标受众，制定关键信息和口号，选择宣传媒体渠道，并决定实现目标所需的任何其他活动。我的第一个建议请求是“我需要帮助针对18-30岁的年轻人制作一种新型能量饮料的广告活动。”",
+        },
+        {
+          title: "作为广告商",
+          content:
+            "2我想让你充当广告商。您将创建一个活动来推广您选择的产品或服务。您将选择目标受众，制定关键信息和口号，选择宣传媒体渠道，并决定实现目标所需的任何其他活动。我的第一个建议请求是“我需要帮助针对18-30岁的年轻人制作一种新型能量饮料的广告活动。”",
+        },
+      ],
       conversations: [
         // {
         //   id: "f8115a5d-4c50-4bfa-851d-70d57d33ad51",
@@ -114,7 +113,17 @@ const app = createApp({
         this.showPrompt = false;
       }
     };
+    const resizeHandler = () => {
+      console.log(111)
+      if (window.innerWidth < 640) {
+        this.showSidebar = false
+      } else {
+        this.showSidebar = true
+      }
+    }
     window.addEventListener("click", handleOutsideClick); 
+    window.addEventListener("resize", resizeHandler);
+    window.addEventListener("load", resizeHandler)
     nextTick(() => {
       this.$refs.TextInput.style.cssText = `max-height: 200px; height: ${this.$refs.TextInput.scrollHeight}px; overflow-y: hidden;`;
     })
@@ -256,6 +265,7 @@ const app = createApp({
       }
       //@ts-ignore
       conversation[option.key] = option.value;
+      this.showSidebar = false
       postConversation(conversation)
     },
     handleDeleteConversation(conversation: Conversation) {
