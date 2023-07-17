@@ -9,14 +9,14 @@ const props = defineProps<Props>();
 
 <template>
   <div
-    class="md:max-w-3xl xl:max-w-5xl m-auto mt-10 md:rounded-md overflow-hidden"
+    class="overflow-hidden"
   >
     <ChatMessage
-      v-for="(message, index) in conversation.messages"
+      v-for="message in conversation.messages"
       :key="message.content"
       :message="message"
     ></ChatMessage>
-    <div class="w-full h-32 md:h-48 flex-shrink-0"></div>
+    <div class="w-full h-28 md:h-48 flex-shrink-0"></div>
   </div>
 </template>
 

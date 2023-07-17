@@ -18,14 +18,14 @@ export default defineConfig({
       : null,
   ],
   experimental: {
-    renderBuiltUrl(filename, { hostType, hostId, type }) {
-      if (filename.indexOf("languages") !== -1) {
-        filename = filename.split("languages")[1]
-        return "https://f.wanmaapp.com/js/static" + filename
-      } else {
-        return { relative: true }
-      } 
-    }
+    // renderBuiltUrl(filename, { hostType, hostId, type }) {
+    //   if (filename.indexOf("languages") !== -1) {
+    //     filename = filename.split("languages")[1]
+    //     return "//f4.wanmaapp.com/static/js/languages" + filename
+    //   } else {
+    //     return { relative: true }
+    //   } 
+    // }
   },
   resolve: {
     extensions: [".vue", ".ts"],
@@ -52,7 +52,7 @@ export default defineConfig({
       },
       output: {
         chunkFileNames: 'static/js/[name].js',
-        entryFileNames: 'static/js/[name].[hash].js',
+        entryFileNames: 'static/js/[name].js',
         assetFileNames: 'static/assets/[name].[hash][extname]',
         manualChunks: (id) => {
           if (id.includes("highlight.js/lib/languages/")) {
